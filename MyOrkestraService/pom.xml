@@ -1,0 +1,135 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>MyOrkestra</groupId>
+  <artifactId>MyOrkestraService</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>MyOrkestra Service (Server)</name>
+  <dependencies>
+  	<dependency>
+	    <groupId>org.apache.thrift</groupId>
+	    <artifactId>libthrift</artifactId>
+	    <version>0.8.0</version>
+	</dependency>
+	<dependency>
+	  <groupId>org.slf4j</groupId>
+	  <artifactId>slf4j-log4j12</artifactId>
+	  <version>1.6.4</version>
+	</dependency>
+	<dependency>
+	    <groupId>javax</groupId>
+	    <artifactId>javaee-web-api</artifactId>
+	    <version>6.0</version>
+	    <scope>provided</scope>
+	  </dependency>
+	
+  </dependencies>
+  
+  
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <thrift.exe>${basedir}/thrift/thrift-0.8.0.exe</thrift.exe>
+    <thrift.interface>${basedir}/interface/Service.thrift</thrift.interface>
+    <gendir.target>${basedir}/target/generated-sources</gendir.target>
+    <gendir.namespace>com/myorkestra/orkestraservice/thrift/gen</gendir.namespace>
+    <gendir.src>${basedir}/src/main/java/${gendir.namespace}</gendir.src>
+    <gendir.js-src>${basedir}/TestWebsite/js/auto-gen</gendir.js-src>
+  </properties>
+
+  
+  <build>
+      <plugins>
+		<plugin>
+			<artifactId>maven-dependency-plugin</artifactId>
+			<executions>
+				<execution>
+					<phase>generate-sources</phase>
+					<goals>
+						<goal>copy-dependencies</goal>
+					</goals>
+					<configuration>
+						<outputDirectory>${basedir}/target/lib</outputDirectory>
+					</configuration>
+				</execution>
+			</executions>
+		</plugin>
+          <plugin>
+              <artifactId>maven-antrun-plugin</artifactId>
+              <version>1.6</version>
+              <configuration></configuration>
+            <executions>
+                <execution>
+                    <id>generate-sources</id>
+                    <phase>generate-sources</phase>
+                        <configuration>
+                            <target>
+                                <echo>
+                                    create (or clear) output directory for generated files
+                                </echo>
+                                <mkdir dir="${gendir.target}" />
+                                <delete>
+                                    <fileset dir="${gendir.target}" includes="**/*" />
+                                </delete>
+                                
+                                <echo>
+                                    generate java source files from ${thrift.interface}
+                                </echo>
+                                <exec executable="${thrift.exe}">
+                                  <arg value="--gen" />
+                                  <arg value="java:beans"/>
+                                  <arg value="-o"/>
+                                  <arg value="${gendir.target}"/>
+                                  <arg value="${thrift.interface}"/>
+                                </exec>
+                                
+                                <exec executable="${thrift.exe}">
+                                  <arg value="--gen" />
+                                  <arg value="js:jquery"/>
+                                  <arg value="-o"/>
+                                  <arg value="${gendir.target}"/>
+                                  <arg value="${thrift.interface}"/>
+                                </exec>
+                                
+                                <echo>
+                                    copy generated java files to ${gendir.src}
+                                </echo>
+                                <mkdir dir="${gendir.src}" />
+                                <delete>
+                                  <fileset dir="${gendir.src}" includes="**/*"/>
+                                </delete>
+                                <copy todir="${gendir.src}">
+                                  <fileset dir="target/generated-sources/gen-javabean/${gendir.namespace}"/>
+                                </copy>
+                                
+                                <echo>
+                                    copy generated JS files to ${gendir.js-src}
+                                </echo>
+                                <mkdir dir="${gendir.js-src}" />
+                                <delete>
+                                  <fileset dir="${gendir.js-src}" includes="**/*"/>
+                                </delete>
+                                <copy todir="${gendir.js-src}">
+                                  <fileset dir="target/generated-sources/gen-js"/>
+                                </copy>
+
+                            </target>
+                        </configuration>
+                    <goals>
+                        <goal>run</goal>
+                    </goals>
+                </execution>
+            </executions>
+          </plugin>
+        
+        
+        <plugin>
+           <groupId>org.apache.maven.plugins</groupId>
+           <artifactId>maven-compiler-plugin</artifactId>
+           <configuration>
+               <source>1.6</source>
+               <target>1.6</target>
+           </configuration>
+        </plugin>
+      </plugins>
+  </build>
+  
+</project>

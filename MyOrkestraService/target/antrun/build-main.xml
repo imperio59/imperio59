@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="maven-antrun-" default="main"  >
+<target name="main">
+  <echo>create (or clear) output directory for generated files</echo>
+  <mkdir dir="C:\Users\imperio59\git\MyOrkestra\MyOrkestraService/target/generated-sources"/>
+  <delete>
+    <fileset dir="C:\Users\imperio59\git\MyOrkestra\MyOrkestraService/target/generated-sources" includes="**/*"/>
+  </delete>
+  <echo>generate java source files from C:\Users\imperio59\git\MyOrkestra\MyOrkestraService/interface/Service.thrift</echo>
+  <exec executable="C:\Users\imperio59\git\MyOrkestra\MyOrkestraService/thrift/thrift-0.8.0.exe">
+    <arg value="--gen"/>
+    <arg value="java:beans"/>
+    <arg value="-o"/>
+    <arg value="C:\Users\imperio59\git\MyOrkestra\MyOrkestraService/target/generated-sources"/>
+    <arg value="C:\Users\imperio59\git\MyOrkestra\MyOrkestraService/interface/Service.thrift"/>
+  </exec>
+  <exec executable="C:\Users\imperio59\git\MyOrkestra\MyOrkestraService/thrift/thrift-0.8.0.exe">
+    <arg value="--gen"/>
+    <arg value="js:jquery"/>
+    <arg value="-o"/>
+    <arg value="C:\Users\imperio59\git\MyOrkestra\MyOrkestraService/target/generated-sources"/>
+    <arg value="C:\Users\imperio59\git\MyOrkestra\MyOrkestraService/interface/Service.thrift"/>
+  </exec>
+  <echo>copy generated java files to C:\Users\imperio59\git\MyOrkestra\MyOrkestraService/src/main/java/com/myorkestra/orkestraservice/thrift/gen</echo>
+  <mkdir dir="C:\Users\imperio59\git\MyOrkestra\MyOrkestraService/src/main/java/com/myorkestra/orkestraservice/thrift/gen"/>
+  <delete>
+    <fileset dir="C:\Users\imperio59\git\MyOrkestra\MyOrkestraService/src/main/java/com/myorkestra/orkestraservice/thrift/gen" includes="**/*"/>
+  </delete>
+  <copy todir="C:\Users\imperio59\git\MyOrkestra\MyOrkestraService/src/main/java/com/myorkestra/orkestraservice/thrift/gen">
+    <fileset dir="target/generated-sources/gen-javabean/com/myorkestra/orkestraservice/thrift/gen"/>
+  </copy>
+  <echo>copy generated JS files to C:\Users\imperio59\git\MyOrkestra\MyOrkestraService/TestWebsite/js/auto-gen</echo>
+  <mkdir dir="C:\Users\imperio59\git\MyOrkestra\MyOrkestraService/TestWebsite/js/auto-gen"/>
+  <delete>
+    <fileset dir="C:\Users\imperio59\git\MyOrkestra\MyOrkestraService/TestWebsite/js/auto-gen" includes="**/*"/>
+  </delete>
+  <copy todir="C:\Users\imperio59\git\MyOrkestra\MyOrkestraService/TestWebsite/js/auto-gen">
+    <fileset dir="target/generated-sources/gen-js"/>
+  </copy>
+</target>
+</project>
